@@ -57,6 +57,11 @@ const Navbar = () => {
               />
             </Link>
           </Button>
+          <Button color="inherit">
+            <Link href="/login" passHref>
+              Logout
+            </Link>
+          </Button>
         </Box>
       </Toolbar>
     </AppBar>
