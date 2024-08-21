@@ -6,13 +6,12 @@ import {
   CardMedia,
   Typography,
   Grid,
-  Container,
   Box,
   Button,
 } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 
-import { removeToCart } from "../services/actions/action";
+import { removeToCart, addToCart } from "../services/actions/action";
 import WithAuth from "./WithAuth";
 
 const Cart = () => {
@@ -42,14 +41,24 @@ const Cart = () => {
                   <Typography variant="subtitle1" color="text.primary">
                     {product.cartData.price}
                   </Typography>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    size="small"
-                    onClick={() => dispatch(removeToCart(product))}
-                  >
-                    Remove
-                  </Button>
+                  <Box display="flex" gap={2}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={() => dispatch(removeToCart(product))}
+                    >
+                      Remove
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={() => dispatch(addToCart(product.cartData))}
+                    >
+                      Add More
+                    </Button>
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>
