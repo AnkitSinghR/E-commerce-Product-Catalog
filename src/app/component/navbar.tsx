@@ -1,14 +1,28 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-import profile from "@/app/utils/Image/profile.png";
-import cart from "@/app/utils/Image/cart.png";
+import SuccessDialog from "./common/SuccessDialog";
+
+const navItems = [
+  { text: "Home", href: "/" },
+  { text: "Products", href: "/products" },
+  { text: "Cart", href: "/cart" },
+  { text: "Profile", href: "/profile" },
+];
 
 const Navbar = () => {
-  const quantity = useSelector((state) => state.cartItem.length);
+  const pathName = usePathname();
+  const [dialog, setDialog] = useState(false);
+
+  const quantity = useSelector((state: any) => state.cartItem.length);
+  const onLogoutClick = () => {
+    localStorage?.clear();
+    setDialog(true);
+  };
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -16,54 +30,30 @@ const Navbar = () => {
           E-commerce Product Catalog
         </Typography>
         <Box>
-          <Button color="inherit">
-            <Link href="/" passHref>
-              <Typography color="inherit">Home</Typography>
+          {navItems.map((item) => (
+            <Link key={item.text} href={item.href} passHref legacyBehavior>
+              <Button color={pathName === item.href ? "secondary" : "inherit"}>
+                {item.text === "Cart" ? `${item.text} ${quantity}` : item.text}
+              </Button>
             </Link>
-          </Button>
-          <Button color="inherit">
-            <Link href="/products" passHref>
-              <Typography color="inherit">Products</Typography>
-            </Link>
-          </Button>
-          <Button color="inherit">
-            <Link href="/cart" passHref>
-              <Image
-                src={cart}
-                alt="Profile"
-                width={50}
-                height={50}
-                style={{ objectFit: "cover", borderRadius: "50%" }}
-              />
-              <Typography
-                variant="h6"
-                mx={2}
-                top="-67px"
-                right="-31px"
-                position="relative"
-              >
-                {quantity}
-              </Typography>
-            </Link>
-          </Button>
-          <Button color="inherit">
-            <Link href="/profile" passHref>
-              <Image
-                src={profile}
-                alt="Profile"
-                width={50}
-                height={50}
-                style={{ objectFit: "cover", borderRadius: "50%" }}
-              />
-            </Link>
-          </Button>
-          <Button color="inherit">
-            <Link href="/login" passHref>
+          ))}
+          <Link href="/login" passHref>
+            <Button
+              color={pathName === "/login" ? "secondary" : "inherit"}
+              onClick={onLogoutClick}
+            >
               Logout
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </Box>
       </Toolbar>
+      {dialog && (
+        <SuccessDialog
+          dialogTitle="Logged Out Successfully"
+          dialogOpen={dialog}
+          handleClose={() => setDialog(false)}
+        />
+      )}
     </AppBar>
   );
 };

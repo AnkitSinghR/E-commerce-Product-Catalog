@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, Suspense, useCallback } from "react";
+import { Product } from "../_utils/type";
 import axios from "axios";
 import {
   Container,
@@ -13,16 +14,17 @@ import { useDispatch } from "react-redux";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { addToCart } from "@/app/services/actions/action";
-interface Product {
-  id: number;
-  category: string;
-  description: string;
-  image: string;
-  price: number;
-  title: string;
-}
-export default function ProductDetails() {
-  const [product, setProduct] = useState<Product>([]);
+import WithAuth from "./WithAuth";
+
+function ProductDetails() {
+  const [product, setProduct] = useState<Product>({
+    id: 0,
+    category: "",
+    description: "",
+    image: "",
+    price: 0,
+    title: "",
+  });
   const params = useParams();
   const { productId } = params;
   const dispatch = useDispatch();
@@ -32,7 +34,6 @@ export default function ProductDetails() {
       let { data } = await axios.get(
         `https://fakestoreapi.com/products/${productId}`
       );
-      console.log("fetchProduct", data);
       setProduct(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -52,9 +53,14 @@ export default function ProductDetails() {
               <Image
                 src={product?.image}
                 alt={product?.title}
+                layout="responsive"
                 width={500}
                 height={500}
-                style={{ objectFit: "cover", borderRadius: "4px" }}
+                style={{
+                  objectFit: "contain",
+                  borderRadius: "4px",
+                  maxHeight: "500px",
+                }}
               />
             </Paper>
           </Grid>
@@ -87,3 +93,5 @@ export default function ProductDetails() {
     </Suspense>
   );
 }
+
+export default WithAuth(ProductDetails);

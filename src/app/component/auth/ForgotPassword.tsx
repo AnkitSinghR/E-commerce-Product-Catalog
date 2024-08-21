@@ -1,24 +1,22 @@
 "use client";
 import React, { useState } from "react";
 import { TextField, Button, Typography, Container, Box } from "@mui/material";
-import SuccessAlerts from "../common/SuccessAlert";
 import { useRouter } from "next/navigation";
+import SuccessDialog from "../common/SuccessDialog";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [dialog, setDialog] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setError("");
-    setSuccessMessage("");
     setTimeout(() => {
       if (email !== "") {
-        setSuccessMessage("Password reset link sent! Check your email.");
         router.push("/login");
-        <SuccessAlerts message="Password reset link sent! Check your email." />;
+        setDialog(true);
       } else {
         setError("Something went wrong. Please try again.");
       }
@@ -50,11 +48,7 @@ const ForgotPassword = () => {
               {error}
             </Typography>
           )}
-          {successMessage && (
-            <Typography color="primary" variant="body2">
-              {successMessage}
-            </Typography>
-          )}
+
           <Button
             type="submit"
             fullWidth
@@ -65,6 +59,13 @@ const ForgotPassword = () => {
             Send Reset Link
           </Button>
         </form>
+        {dialog && (
+          <SuccessDialog
+            dialogTitle="Password reset link sent! Check your email."
+            handleClose={() => setDialog(false)}
+            dialogOpen={dialog}
+          />
+        )}
       </Box>
     </Container>
   );

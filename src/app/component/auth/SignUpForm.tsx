@@ -15,7 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import SuccessAlerts from "../common/SuccessAlert";
+import SuccessDialog from "../common/SuccessDialog";
 
 const SignUpSchema = Yup.object().shape({
   username: Yup.string()
@@ -47,6 +47,7 @@ const SignUpSchema = Yup.object().shape({
 
 const SignUpForm = () => {
   const router = useRouter();
+  const [dialog, setDialog] = useState(false);
   return (
     <Container maxWidth="xs">
       <Box
@@ -84,8 +85,12 @@ const SignUpForm = () => {
                   },
                 }
               );
+              console.log("sign response", response);
               if (response.status === 200) {
-                <SuccessAlerts />;
+                {
+                  console.log("inside if");
+                }
+                setDialog(true);
                 router.push("/login");
               }
               console.log("response", response);
@@ -196,6 +201,13 @@ const SignUpForm = () => {
             </Form>
           )}
         </Formik>
+        {dialog && (
+          <SuccessDialog
+            dialogTitle="Your registeration has been successfull"
+            handleClose={() => setDialog(false)}
+            dialogOpen={dialog}
+          />
+        )}
       </Box>
     </Container>
   );

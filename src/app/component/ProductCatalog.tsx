@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import WithAuth from "@/app/component/WithAuth";
+import { Product, Category } from "../_utils/type";
 
 import {
   Container,
@@ -18,30 +19,25 @@ import {
   Typography,
   Box,
   Slider,
+  Tooltip,
 } from "@mui/material";
 
-interface Product {
-  id: number;
-  category: string;
-  description: string;
-  image: string;
-  price: number;
-  title: string;
-}
-interface Category {
-  title: string;
-  value: string;
-}
+type NumberTuple = [0, 100000];
 const ProductCatalog = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 100000]);
-  const [filteredProducts, setFilteredProducts] = useState<string[]>([]);
-  const [products, setProducts] = useState([]);
+  const [priceRange, setPriceRange] = useState<number[]>([0, 100000]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const router = useRouter();
 
-  const [category, setCategory] = useState<Category[]>([]);
+  const [category, setCategory] = useState<Category[]>([
+    {
+      title: "",
+      value: "",
+    },
+  ]);
   const fetchProductList = async () => {
     try {
       let { data } = await axios.get("https://fakestoreapi.com/products");
@@ -58,8 +54,6 @@ const ProductCatalog = () => {
   useEffect(() => {
     fetchProductList();
   }, []);
-
-  interface Products {}
 
   useEffect(() => {
     let filtered = products?.filter(
@@ -85,13 +79,9 @@ const ProductCatalog = () => {
 
   return (
     <Container>
-      <Typography variant="h4" align="center" gutterBottom>
-        Product Catalog
-      </Typography>
-
-      <Box mb={4}>
+      <Box mb={4} mt={2}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={12} md={6} lg={4}>
             <TextField
               fullWidth
               variant="outlined"
@@ -101,7 +91,7 @@ const ProductCatalog = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={12} md={6} lg={4}>
             <FormControl fullWidth variant="outlined">
               <InputLabel>Sort By</InputLabel>
               <Select
@@ -116,7 +106,7 @@ const ProductCatalog = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={12} md={6} lg={4}>
             <FormControl fullWidth variant="outlined">
               <InputLabel>Category</InputLabel>
               <Select
@@ -124,7 +114,7 @@ const ProductCatalog = () => {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 label="Category"
               >
-                {category.map((item) => (
+                {category.map((item: any) => (
                   <MenuItem key={item} value={item === "All" ? "" : item}>
                     {item}
                   </MenuItem>
@@ -133,11 +123,11 @@ const ProductCatalog = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={12} md={12} lg={12}>
             <Typography gutterBottom>Price Range</Typography>
             <Slider
               value={priceRange}
-              onChange={(e, newValue) => setPriceRange(newValue)}
+              onChange={(e, newValue: any) => setPriceRange(newValue)}
               valueLabelDisplay="auto"
               min={0}
               max={10}
@@ -149,25 +139,27 @@ const ProductCatalog = () => {
 
       <Grid container spacing={4}>
         {filteredProducts.map((product) => (
-          <Grid item key={product.id} xs={12} sm={6} md={4}>
+          <Grid item key={product.id} xs={12} sm={12} md={6} lg={4}>
             <Card
               onClick={() => navigateToProductDetails(product)}
               style={{ cursor: "pointer" }}
             >
               <CardMedia
                 component="img"
-                alt={product.name}
+                alt={product.title}
                 height="200"
                 image={product?.image}
               />
               <CardContent>
-                <Typography gutterBottom variant="h5">
-                  {product?.title}
-                </Typography>
+                <Tooltip title={product?.title}>
+                  <Typography gutterBottom variant="h5" className="croppedText">
+                    {product?.title}
+                  </Typography>
+                </Tooltip>
                 <Typography variant="body2" color="textSecondary">
                   {product?.category}
                 </Typography>
-                <Typography variant="h6">{product?.price}</Typography>
+                <Typography variant="h6">${product?.price}</Typography>
               </CardContent>
             </Card>
           </Grid>

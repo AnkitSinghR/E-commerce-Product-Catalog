@@ -58,7 +58,7 @@ function SignIn() {
           <Formik
             initialValues={{ username: "", password: "" }}
             validationSchema={LoginSchema}
-            onSubmit={async (values, setSubmitting) => {
+            onSubmit={async (values) => {
               try {
                 let response = await axios.post(
                   "https://fakestoreapi.com/auth/login",
@@ -67,9 +67,10 @@ function SignIn() {
                     password: values?.password,
                   }
                 );
-                console.log("login response", response);
+
                 if (response.status === 200) {
-                  localStorage.setItem("authToken", response.data.token);
+                  localStorage?.setItem("username", values.username);
+                  localStorage?.setItem("authToken", response.data.token);
                   router.push("/");
                 }
               } catch (error: any) {
@@ -115,7 +116,7 @@ function SignIn() {
                     Login
                   </Button>
                   {error && <Typography color="error.main">{error}</Typography>}
-                  <Grid container>
+                  <Grid container gap={3}>
                     <Grid item xs>
                       <Link href="/forgot-password" variant="body2">
                         Forgot password?
