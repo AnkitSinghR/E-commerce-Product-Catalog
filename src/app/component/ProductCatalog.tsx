@@ -130,7 +130,7 @@ const ProductCatalog = () => {
               onChange={(e, newValue: any) => setPriceRange(newValue)}
               valueLabelDisplay="auto"
               min={0}
-              max={10}
+              max={200}
               step={100}
             />
           </Grid>
